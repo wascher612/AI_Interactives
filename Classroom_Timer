@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classroom Timer</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .timer-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #4a5568;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        .time-display {
+            font-size: 6em;
+            font-weight: bold;
+            color: #2d3748;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 15px;
+            border: 3px solid #e2e8f0;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .time-display.warning {
+            color: #e53e3e;
+            background: #fed7d7;
+            border-color: #feb2b2;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .input-section {
+            margin: 20px 0;
+        }
+
+        .input-section input {
+            font-size: 1.5em;
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            text-align: center;
+            width: 80px;
+            margin: 0 5px;
+        }
+
+        .input-section label {
+            font-size: 1.1em;
+            color: #4a5568;
+            margin: 0 5px;
+        }
+
+        .button-group {
+            margin: 15px 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        button {
+            font-size: 1.1em;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .adjust-btn {
+            background: #4299e1;
+            color: white;
+        }
+
+        .adjust-btn:hover {
+            background: #3182ce;
+            transform: translateY(-2px);
+        }
+
+        .preset-btn {
+            background: #48bb78;
+            color: white;
+            min-width: 80px;
+        }
+
+        .preset-btn:hover {
+            background: #38a169;
+            transform: translateY(-2px);
+        }
+
+        .control-btn {
+            font-size: 1.3em;
+            padding: 15px 30px;
+            margin: 0 10px;
+        }
+
+        .pause-btn {
+            background: #ed8936;
+            color: white;
+        }
+
+        .pause-btn:hover {
+            background: #dd6b20;
+        }
+
+        .reset-btn {
+            background: #e53e3e;
+            color: white;
+        }
+
+        .reset-btn:hover {
+            background: #c53030;
+        }
+
+        .start-btn {
+            background: #48bb78;
+            color: white;
+        }
+
+        .start-btn:hover {
+            background: #38a169;
+        }
+
+        .controls {
+            margin-top: 30px;
+        }
+
+        .section-title {
+            font-size: 1.2em;
+            color: #4a5568;
+            margin: 20px 0 10px 0;
+            font-weight: bold;
+        }
+
+        @media (max-width: 600px) {
+            .time-display {
+                font-size: 4em;
+                min-height: 80px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .timer-container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="timer-container">
+        <h1>🕐 Classroom Timer</h1>
+        
+        <div class="time-display" id="timeDisplay">00:00</div>
+        
+        <div class="input-section">
+            <label for="minutes">Minutes:</label>
+            <input type="number" id="minutes" min="0" max="59" value="5">
+            <label for="seconds">Seconds:</label>
+            <input type="number" id="seconds" min="0" max="59" value="0">
+        </div>
+
+        <div class="section-title">Quick Adjustments</div>
+        <div class="button-group">
+            <button class="adjust-btn" onclick="adjustTime(-1)">-1 Min</button>
+            <button class="adjust-btn" onclick="adjustTime(1)">+1 Min</button>
+            <button class="adjust-btn" onclick="adjustTime(5)">+5 Min</button>
+        </div>
+
+        <div class="section-title">Quick Presets</div>
+        <div class="button-group">
+            <button class="preset-btn" onclick="setPreset(1)">1 Min</button>
+            <button class="preset-btn" onclick="setPreset(5)">5 Min</button>
+            <button class="preset-btn" onclick="setPreset(10)">10 Min</button>
+            <button class="preset-btn" onclick="setPreset(15)">15 Min</button>
+            <button class="preset-btn" onclick="setPreset(20)">20 Min</button>
+            <button class="preset-btn" onclick="setPreset(30)">30 Min</button>
+            <button class="preset-btn" onclick="setPreset(45)">45 Min</button>
+            <button class="preset-btn" onclick="setPreset(60)">60 Min</button>
+        </div>
+
+        <div class="controls">
+            <button class="control-btn start-btn" id="startBtn" onclick="startTimer()">Start</button>
+            <button class="control-btn pause-btn" id="pauseBtn" onclick="pauseTimer()">Pause</button>
+            <button class="control-btn reset-btn" onclick="resetTimer()">Reset</button>
+        </div>
+    </div>
+
+    <script>
+        let totalSeconds = 0;
+        let currentSeconds = 0;
+        let timerInterval = null;
+        let isRunning = false;
+        let isPaused = false;
+
+        const timeDisplay = document.getElementById('timeDisplay');
+        const minutesInput = document.getElementById('minutes');
+        const secondsInput = document.getElementById('seconds');
+        const startBtn = document.getElementById('startBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+
+        // Update display when inputs change
+        minutesInput.addEventListener('input', updateDisplayFromInputs);
+        secondsInput.addEventListener('input', updateDisplayFromInputs);
+
+        function updateDisplayFromInputs() {
+            if (!isRunning) {
+                const mins = parseInt(minutesInput.value) || 0;
+                const secs = parseInt(secondsInput.value) || 0;
+                totalSeconds = (mins * 60) + secs;
+                currentSeconds = totalSeconds;
+                updateDisplay();
+            }
+        }
+
+        function updateDisplay() {
+            const minutes = Math.floor(currentSeconds / 60);
+            const seconds = currentSeconds % 60;
+            const display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            timeDisplay.textContent = display;
+
+            // Add warning style when time is low
+            if (currentSeconds <= 10 && currentSeconds > 0) {
+                timeDisplay.classList.add('warning');
+            } else {
+                timeDisplay.classList.remove('warning');
+            }
+
+            // Flash when time reaches zero
+            if (currentSeconds === 0 && isRunning) {
+                timeDisplay.style.background = '#fc8181';
+                timeDisplay.style.color = 'white';
+                
+                // Play a simple beep sound (if supported)
+                try {
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    oscillator.frequency.value = 800;
+                    oscillator.type = 'sine';
+                    
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1);
+                    
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 1);
+                } catch (e) {
+                    console.log('Audio not supported');
+                }
+                
+                setTimeout(() => {
+                    timeDisplay.style.background = '#f7fafc';
+                    timeDisplay.style.color = '#2d3748';
+                    stopTimer();
+                }, 2000);
+            }
+        }
+
+        function startTimer() {
+            if (!isRunning && !isPaused) {
+                updateDisplayFromInputs();
+                if (currentSeconds === 0) {
+                    alert('Please set a time greater than 0');
+                    return;
+                }
+            }
+
+            isRunning = true;
+            isPaused = false;
+            startBtn.textContent = 'Running...';
+            startBtn.disabled = true;
+
+            timerInterval = setInterval(() => {
+                if (currentSeconds > 0) {
+                    currentSeconds--;
+                    updateDisplay();
+                } else {
+                    stopTimer();
+                }
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            if (isRunning) {
+                clearInterval(timerInterval);
+                isRunning = false;
+                isPaused = true;
+                startBtn.textContent = 'Resume';
+                startBtn.disabled = false;
+            }
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            isRunning = false;
+            isPaused = false;
+            currentSeconds = 0;
+            startBtn.textContent = 'Start';
+            startBtn.disabled = false;
+            timeDisplay.classList.remove('warning');
+            timeDisplay.style.background = '#f7fafc';
+            timeDisplay.style.color = '#2d3748';
+            updateDisplay();
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            isRunning = false;
+            isPaused = false;
+            startBtn.textContent = 'Start';
+            startBtn.disabled = false;
+        }
+
+        function adjustTime(minutes) {
+            if (!isRunning) {
+                const newMinutes = Math.max(0, (parseInt(minutesInput.value) || 0) + minutes);
+                minutesInput.value = newMinutes;
+                updateDisplayFromInputs();
+            }
+        }
+
+        function setPreset(minutes) {
+            if (!isRunning) {
+                minutesInput.value = minutes;
+                secondsInput.value = 0;
+                updateDisplayFromInputs();
+            }
+        }
+
+        // Initialize display
+        updateDisplayFromInputs();
+    </script>
+</body>
+</html>
