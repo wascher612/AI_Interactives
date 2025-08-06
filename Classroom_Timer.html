@@ -3,195 +3,400 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Classroom Timer</title>
+    <title>Modern Classroom Timer</title>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
             margin: 0;
-            padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
         }
 
         .timer-container {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            max-width: 600px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            padding: 48px;
+            max-width: 640px;
             width: 100%;
+            text-align: center;
+            box-shadow: 0 32px 64px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .timer-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(99, 102, 241, 0.1), rgba(168, 85, 247, 0.1));
+            border-radius: 24px;
+            z-index: -1;
         }
 
         h1 {
-            color: #4a5568;
-            margin-bottom: 30px;
-            font-size: 2.5em;
+            color: #f1f5f9;
+            margin-bottom: 40px;
+            font-size: 2.5rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .time-display {
-            font-size: 6em;
-            font-weight: bold;
-            color: #2d3748;
-            margin: 20px 0;
-            font-family: 'Courier New', monospace;
-            background: #f7fafc;
-            padding: 20px;
-            border-radius: 15px;
-            border: 3px solid #e2e8f0;
-            min-height: 120px;
+            font-size: 7rem;
+            font-weight: 300;
+            color: #ffffff;
+            margin: 32px 0;
+            font-family: 'Inter', sans-serif;
+            background: rgba(15, 15, 35, 0.6);
+            padding: 32px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            min-height: 160px;
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-
-        .time-display.warning {
-            color: #e53e3e;
-            background: #fed7d7;
-            border-color: #feb2b2;
-            animation: pulse 1s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        .input-section {
-            margin: 20px 0;
-        }
-
-        .input-section input {
-            font-size: 1.5em;
-            padding: 10px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            text-align: center;
-            width: 80px;
-            margin: 0 5px;
-        }
-
-        .input-section label {
-            font-size: 1.1em;
-            color: #4a5568;
-            margin: 0 5px;
-        }
-
-        .button-group {
-            margin: 15px 0;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        button {
-            font-size: 1.1em;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
+            position: relative;
+            overflow: hidden;
             transition: all 0.3s ease;
         }
 
-        .adjust-btn {
-            background: #4299e1;
-            color: white;
+        .time-display::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #60a5fa, #a78bfa, #f472b6, #60a5fa);
+            border-radius: 20px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
-        .adjust-btn:hover {
-            background: #3182ce;
-            transform: translateY(-2px);
+        .time-display.warning {
+            color: #ff6b6b;
+            animation: glow 1s ease-in-out infinite alternate;
+            transform: scale(1.02);
         }
 
-        .preset-btn {
-            background: #48bb78;
-            color: white;
-            min-width: 80px;
+        .time-display.warning::before {
+            opacity: 0.3;
+            animation: rotate 2s linear infinite;
         }
 
-        .preset-btn:hover {
-            background: #38a169;
-            transform: translateY(-2px);
+        @keyframes glow {
+            from { box-shadow: 0 0 20px rgba(255, 107, 107, 0.5); }
+            to { box-shadow: 0 0 40px rgba(255, 107, 107, 0.8); }
         }
 
-        .control-btn {
-            font-size: 1.3em;
-            padding: 15px 30px;
-            margin: 0 10px;
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
-        .pause-btn {
-            background: #ed8936;
-            color: white;
+        .input-section {
+            margin: 32px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
         }
 
-        .pause-btn:hover {
-            background: #dd6b20;
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
         }
 
-        .reset-btn {
-            background: #e53e3e;
-            color: white;
+        .input-section input {
+            font-size: 1.5rem;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: #ffffff;
+            text-align: center;
+            width: 100px;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
         }
 
-        .reset-btn:hover {
-            background: #c53030;
+        .input-section input:focus {
+            outline: none;
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
+            background: rgba(255, 255, 255, 0.15);
         }
 
-        .start-btn {
-            background: #48bb78;
-            color: white;
+        .input-section input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
         }
 
-        .start-btn:hover {
-            background: #38a169;
-        }
-
-        .controls {
-            margin-top: 30px;
+        .input-section label {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .section-title {
-            font-size: 1.2em;
-            color: #4a5568;
-            margin: 20px 0 10px 0;
-            font-weight: bold;
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin: 32px 0 16px 0;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        @media (max-width: 600px) {
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        button {
+            font-size: 1rem;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        .adjust-btn {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .adjust-btn:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 12px 24px rgba(59, 130, 246, 0.3);
+        }
+
+        .preset-btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            min-width: 80px;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .preset-btn:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 12px 24px rgba(16, 185, 129, 0.3);
+        }
+
+        .control-btn {
+            font-size: 1.2rem;
+            padding: 18px 36px;
+            margin: 0 8px;
+            border-radius: 16px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .start-btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .start-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 16px 32px rgba(16, 185, 129, 0.4);
+        }
+
+        .start-btn:disabled {
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+            transform: none;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .pause-btn {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .pause-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 16px 32px rgba(245, 158, 11, 0.4);
+        }
+
+        .reset-btn {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .reset-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 16px 32px rgba(239, 68, 68, 0.4);
+        }
+
+        .controls {
+            margin-top: 40px;
+        }
+
+        .floating-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -2;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .particle:nth-child(1) { width: 4px; height: 4px; left: 10%; animation-delay: 0s; }
+        .particle:nth-child(2) { width: 6px; height: 6px; left: 20%; animation-delay: 1s; }
+        .particle:nth-child(3) { width: 3px; height: 3px; left: 30%; animation-delay: 2s; }
+        .particle:nth-child(4) { width: 5px; height: 5px; left: 40%; animation-delay: 3s; }
+        .particle:nth-child(5) { width: 4px; height: 4px; left: 50%; animation-delay: 4s; }
+        .particle:nth-child(6) { width: 7px; height: 7px; left: 60%; animation-delay: 5s; }
+        .particle:nth-child(7) { width: 3px; height: 3px; left: 70%; animation-delay: 0.5s; }
+        .particle:nth-child(8) { width: 5px; height: 5px; left: 80%; animation-delay: 1.5s; }
+        .particle:nth-child(9) { width: 4px; height: 4px; left: 90%; animation-delay: 2.5s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(100vh) scale(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) scale(1); opacity: 0; }
+        }
+
+        @media (max-width: 768px) {
             .time-display {
-                font-size: 4em;
-                min-height: 80px;
+                font-size: 5rem;
+                padding: 24px;
+                min-height: 120px;
             }
             
             h1 {
-                font-size: 2em;
+                font-size: 2rem;
             }
             
             .timer-container {
-                padding: 20px;
+                padding: 32px 24px;
+                margin: 10px;
+            }
+            
+            .control-btn {
+                font-size: 1rem;
+                padding: 14px 28px;
+                margin: 8px 4px;
+            }
+            
+            .input-section {
+                flex-direction: column;
+                gap: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .time-display {
+                font-size: 4rem;
+            }
+            
+            .button-group {
+                gap: 8px;
+            }
+            
+            button {
+                padding: 10px 16px;
+                font-size: 0.9rem;
+            }
+            
+            .control-btn {
+                padding: 12px 20px;
+                font-size: 0.95rem;
+                margin: 6px 2px;
             }
         }
     </style>
 </head>
 <body>
+    <div class="floating-particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
     <div class="timer-container">
-        <h1>🕐 Classroom Timer</h1>
+        <h1>⏰ Classroom Timer</h1>
         
         <div class="time-display" id="timeDisplay">00:00</div>
         
         <div class="input-section">
-            <label for="minutes">Minutes:</label>
-            <input type="number" id="minutes" min="0" max="59" value="5">
-            <label for="seconds">Seconds:</label>
-            <input type="number" id="seconds" min="0" max="59" value="0">
+            <div class="input-group">
+                <input type="number" id="minutes" min="0" max="59" value="5" placeholder="00">
+                <label for="minutes">Minutes</label>
+            </div>
+            <div class="input-group">
+                <input type="number" id="seconds" min="0" max="59" value="0" placeholder="00">
+                <label for="seconds">Seconds</label>
+            </div>
         </div>
 
         <div class="section-title">Quick Adjustments</div>
@@ -260,37 +465,47 @@
                 timeDisplay.classList.remove('warning');
             }
 
-            // Flash when time reaches zero
+            // Enhanced finish animation
             if (currentSeconds === 0 && isRunning) {
-                timeDisplay.style.background = '#fc8181';
+                timeDisplay.style.background = 'linear-gradient(45deg, #ff6b6b, #ee5a24)';
                 timeDisplay.style.color = 'white';
+                timeDisplay.style.transform = 'scale(1.1)';
                 
-                // Play a simple beep sound (if supported)
+                // Play enhanced beep sound
                 try {
                     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                    const oscillator = audioContext.createOscillator();
-                    const gainNode = audioContext.createGain();
                     
-                    oscillator.connect(gainNode);
-                    gainNode.connect(audioContext.destination);
+                    // Create multiple tones for a richer sound
+                    const frequencies = [800, 1000, 1200];
                     
-                    oscillator.frequency.value = 800;
-                    oscillator.type = 'sine';
-                    
-                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1);
-                    
-                    oscillator.start(audioContext.currentTime);
-                    oscillator.stop(audioContext.currentTime + 1);
+                    frequencies.forEach((freq, index) => {
+                        setTimeout(() => {
+                            const oscillator = audioContext.createOscillator();
+                            const gainNode = audioContext.createGain();
+                            
+                            oscillator.connect(gainNode);
+                            gainNode.connect(audioContext.destination);
+                            
+                            oscillator.frequency.value = freq;
+                            oscillator.type = 'sine';
+                            
+                            gainNode.gain.setValueAtTime(0.15, audioContext.currentTime);
+                            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                            
+                            oscillator.start(audioContext.currentTime);
+                            oscillator.stop(audioContext.currentTime + 0.5);
+                        }, index * 200);
+                    });
                 } catch (e) {
                     console.log('Audio not supported');
                 }
                 
                 setTimeout(() => {
-                    timeDisplay.style.background = '#f7fafc';
-                    timeDisplay.style.color = '#2d3748';
+                    timeDisplay.style.background = 'rgba(15, 15, 35, 0.6)';
+                    timeDisplay.style.color = '#ffffff';
+                    timeDisplay.style.transform = 'scale(1)';
                     stopTimer();
-                }, 2000);
+                }, 3000);
             }
         }
 
@@ -298,7 +513,11 @@
             if (!isRunning && !isPaused) {
                 updateDisplayFromInputs();
                 if (currentSeconds === 0) {
-                    alert('Please set a time greater than 0');
+                    // Create a subtle shake animation for invalid start
+                    timeDisplay.style.animation = 'shake 0.5s ease-in-out';
+                    setTimeout(() => {
+                        timeDisplay.style.animation = '';
+                    }, 500);
                     return;
                 }
             }
@@ -336,8 +555,9 @@
             startBtn.textContent = 'Start';
             startBtn.disabled = false;
             timeDisplay.classList.remove('warning');
-            timeDisplay.style.background = '#f7fafc';
-            timeDisplay.style.color = '#2d3748';
+            timeDisplay.style.background = 'rgba(15, 15, 35, 0.6)';
+            timeDisplay.style.color = '#ffffff';
+            timeDisplay.style.transform = 'scale(1)';
             updateDisplay();
         }
 
@@ -364,6 +584,17 @@
                 updateDisplayFromInputs();
             }
         }
+
+        // Add CSS for shake animation
+        const shakeStyle = document.createElement('style');
+        shakeStyle.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-10px); }
+                75% { transform: translateX(10px); }
+            }
+        `;
+        document.head.appendChild(shakeStyle);
 
         // Initialize display
         updateDisplayFromInputs();
