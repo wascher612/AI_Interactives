@@ -596,6 +596,72 @@
         `;
         document.head.appendChild(shakeStyle);
 
+        // Keyboard controls - Spacebar to start/pause
+        document.addEventListener('keydown', function(event) {
+            // Check if spacebar is pressed and not typing in an input field
+            if (event.code === 'Space' && !event.target.matches('input')) {
+                event.preventDefault(); // Prevent page scroll
+                
+                if (!isRunning && !isPaused) {
+                    // Start timer
+                    startTimer();
+                } else if (isRunning) {
+                    // Pause timer
+                    pauseTimer();
+                } else if (isPaused) {
+                    // Resume timer
+                    startTimer();
+                }
+            }
+        });
+
+        // Add visual indicator for spacebar functionality
+        const spacebarHint = document.createElement('div');
+        spacebarHint.innerHTML = '💡 Press <kbd>SPACEBAR</kbd> to start/pause';
+        spacebarHint.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            font-weight: 500;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            z-index: 1000;
+        `;
+        
+        // Style the kbd element
+        const kbdStyle = document.createElement('style');
+        kbdStyle.textContent += `
+            kbd {
+                background: rgba(255, 255, 255, 0.2);
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                border-radius: 4px;
+                padding: 2px 6px;
+                font-size: 0.8rem;
+                font-weight: 600;
+                color: #ffffff;
+                margin: 0 2px;
+            }
+        `;
+        document.head.appendChild(kbdStyle);
+        document.body.appendChild(spacebarHint);
+        
+        // Show hint on hover over timer
+        document.querySelector('.timer-container').addEventListener('mouseenter', () => {
+            spacebarHint.style.opacity = '1';
+        });
+        
+        document.querySelector('.timer-container').addEventListener('mouseleave', () => {
+            spacebarHint.style.opacity = '0.7';
+        });
+
         // Initialize display
         updateDisplayFromInputs();
     </script>
